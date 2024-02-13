@@ -1,0 +1,57 @@
+{% extends 'base.html' %}
+
+{% block content %}
+  <h2>{{ question.title }}</h2>
+  <p>{{ question.content }}</p>
+  <p>Posted by: {{ question.user.username }} | {{ question.timestamp }}</p>
+
+  <h3>Answers</h3>
+  {% if question.answer_set.all %}
+  <ul>
+    {% for answer in question.answer_set.all %}
+        <li>{{ answer.content }}</li>
+        <p>Posted by: {{ answer.user.username }} | {{ answer.timestamp }}</p>
+        <h1>Counter Value: <span id="counter_value">{{ counter_value }}</span></h1>
+        <button id="increment_button">Increment Counter</button>
+        <p>Upvotes: <span class="upvotes-count">{{ answer.upvotes.count }}</span> | Downvotes: <span class="downvotes-count">{{ answer.downvotes.count }}</span></p>
+  
+    
+    
+        {% endfor %}
+</ul>
+{% else %}
+<p>No answers yet.</p>
+{% endif %}
+
+{% if user.is_authenticated %}
+  <form method="post" action="{% url 'answer_question' question.id %}">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit">Submit Answer</button>
+  </form>
+{% else %}
+  <p>Please <a href="{% url 'login' %}">log in</a> to answer this question.</p>
+{% endif %}
+
+
+
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script>
+    $(document).ready(function() {
+            $('#increment_button').click(function() {
+                $.ajax({
+                    type: 'POST',
+                    url: '{% url "increment_counter" %}',
+                    dataType: 'json',
+                    success: function(data) {
+                        $('#counter_value').text(data.counter);
+                    },
+                    error: function(xhr, errmsg, err) {
+                        console.log(xhr.status + ": " + xhr.responseText);
+                    }
+                });
+            });
+        });
+</script>
+{% endblock %}

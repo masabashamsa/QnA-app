@@ -1,0 +1,22 @@
+<!-- base.html -->
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Islam QnA</title>
+</head>
+<body>
+  <header>
+    <h1>Islam QnA</h1>
+    {% if user.is_authenticated %}
+      <p>Welcome, {{ user.username }}! (<a href="{% url 'logout' %}">Logout</a>)</p>
+    {% else %}
+      <p>(<a href="{% url 'login' %}">Login</a> | <a href="{% url 'signup' %}">Sign up</a>)</p>
+    {% endif %}
+  </header>
+
+  <main>
+    {% block content %}
+    {% endblock %}
+  </main>
+</body>
+</html>
